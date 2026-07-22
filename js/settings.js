@@ -80,3 +80,7 @@ export function loadColorFilter() {
     const saved = localStorage.getItem('colorFilter');
     colorFilter = saved || null;
 }
+
+export function getFontSize() {
+    return 100;
+}
