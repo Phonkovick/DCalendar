@@ -47,3 +47,19 @@ export function getNoteColor(dateStr) {
     const note = loadNote(dateStr);
     return note.color || null;
 }
+
+// --- Новая функция для экспорта ---
+export function getAllNotes() {
+    const notes = [];
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith('note-')) {
+            const dateStr = key.replace('note-', '');
+            const data = loadNote(dateStr);
+            if (data.text || data.title) {
+                notes.push({ date: dateStr, ...data });
+            }
+        }
+    }
+    return notes;
+}
