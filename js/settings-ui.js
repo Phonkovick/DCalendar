@@ -28,18 +28,14 @@ filterButtons.forEach(btn => {
     btn.addEventListener('click', () => {
         const selectedColor = btn.dataset.color === 'null' ? null : btn.dataset.color;
         setColorFilter(selectedColor);
-        // Обновляем активный класс
         filterButtons.forEach(b => b.classList.remove('active-filter'));
         btn.classList.add('active-filter');
-        // Закрываем настройки (опционально)
-        // closeSettings();
     });
 });
 
 filterResetBtn.addEventListener('click', () => {
     setColorFilter(null);
     filterButtons.forEach(b => b.classList.remove('active-filter'));
-    // Сбрасываем активный класс у кнопок
 });
 
 function openSettings() {
@@ -85,6 +81,7 @@ modeToggle.addEventListener('change', () => {
 });
 
 weekStartToggle.addEventListener('change', () => {
+	console.log('Переключение Пн/Вс, новое значение:', weekStartToggle.checked ? 'sunday' : 'monday');
     const value = weekStartToggle.checked ? 'sunday' : 'monday';
     setWeekStart(value);
 });

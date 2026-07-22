@@ -41,6 +41,7 @@ export function getWeekStart() {
 }
 
 export function setWeekStart(value) {
+	console.log('setWeekStart вызван, значение:', value);
     if (value !== 'monday' && value !== 'sunday') return;
     weekStart = value;
     localStorage.setItem('weekStart', value);

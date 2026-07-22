@@ -12,17 +12,15 @@ let isYearView = false;
 
 const monthYearEl = document.getElementById('monthYear');
 
-// Переключение между месячным и годовым видом
 function toggleView() {
     isYearView = !isYearView;
     refreshCalendar();
 }
 
-// Клик по заголовку переключает вид
 monthYearEl.addEventListener('click', toggleView);
 
-// Функция обновления календаря
 function refreshCalendar() {
+	console.log('refreshCalendar вызван, неделя:', getWeekStart());
     console.log('refreshCalendar вызван, isYearView:', isYearView);
     if (isYearView) {
         renderYearView(currentYear);
@@ -32,7 +30,6 @@ function refreshCalendar() {
     refreshSearch();
 }
 
-// Обработчик события выбора месяца из годового обзора
 document.addEventListener('month-selected', (e) => {
     const { year, month } = e.detail;
     currentYear = year;
@@ -41,7 +38,6 @@ document.addEventListener('month-selected', (e) => {
     refreshCalendar();
 });
 
-// Навигация (стрелки)
 document.getElementById('prevMonth').addEventListener('click', () => {
     if (isYearView) {
         currentYear--;
@@ -63,7 +59,6 @@ document.getElementById('nextMonth').addEventListener('click', () => {
     }
 });
 
-// Кнопка "Сегодня"
 document.getElementById('todayBtn').addEventListener('click', () => {
     const today = new Date();
     currentYear = today.getFullYear();
@@ -72,7 +67,6 @@ document.getElementById('todayBtn').addEventListener('click', () => {
     refreshCalendar();
 });
 
-// Инициализация
 loadTheme();
 loadAllSettings();
 initSearch();
