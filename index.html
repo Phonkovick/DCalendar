@@ -12,6 +12,7 @@
     <div class="header">
         <span class="month-year" id="monthYear">Январь 2026</span>
         <div class="header-controls">
+		    <button class="nav-btn" id="exportBtn" title="Экспорт в ICS">📤</button>
             <button class="nav-btn" id="settingsBtn" title="Настройки">⚙️</button>
             <button class="nav-btn" id="todayBtn" title="Сегодня">📅</button>
             <button class="nav-btn" id="prevMonth">‹</button>
@@ -27,7 +28,6 @@
 
     <div class="days-grid" id="daysGrid"></div>
 
-    <!-- Панель для inline-режима (одна, с id) -->
     <div class="note-panel" id="notePanel">
         <div class="note-panel-header">
             <span class="note-panel-date" id="panelDate">Заметка на 12.01.2026</span>
@@ -52,7 +52,6 @@
     </div>
 </div>
 
-<!-- Модалка заметок -->
 <div class="modal-overlay" id="modalOverlay">
     <div class="modal">
         <h2 id="modalDate">Заметка на 12.01.2026</h2>
@@ -76,7 +75,6 @@
     </div>
 </div>
 
-<!-- Модалка настроек -->
 <div class="modal-overlay" id="settingsModal">
     <div class="modal settings-modal">
         <div class="settings-header">
