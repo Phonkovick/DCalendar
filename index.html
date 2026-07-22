@@ -12,7 +12,6 @@
     <div class="header">
         <span class="month-year" id="monthYear">Январь 2026</span>
         <div class="header-controls">
-		    <button class="nav-btn" id="exportBtn" title="Экспорт в ICS">📤</button>
             <button class="nav-btn" id="settingsBtn" title="Настройки">⚙️</button>
             <button class="nav-btn" id="todayBtn" title="Сегодня">📅</button>
             <button class="nav-btn" id="prevMonth">‹</button>
@@ -140,6 +139,15 @@
                 <label>Размер шрифта: <span id="fontSizeLabel">100%</span></label>
                 <input type="range" id="fontSizeSlider" min="80" max="150" value="100" step="1" />
                 <p class="setting-desc">Измените размер текста в календаре</p>
+            </div>
+
+            <div class="setting-item">
+                <label>Экспорт / Импорт заметок</label>
+                <div style="display:flex; gap:10px; margin-top:6px; flex-wrap:wrap;">
+                    <button class="settings-action-btn" id="exportBtn" title="Экспорт в ICS">📤 Экспорт в ICS</button>
+                    <button class="settings-action-btn" id="importBtn" title="Импорт из ICS">📥 Импорт из ICS</button>
+                </div>
+                <p class="setting-desc">Скачать все заметки в файл .ics или загрузить из файла</p>
             </div>
         </div>
     </div>

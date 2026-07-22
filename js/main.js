@@ -6,6 +6,7 @@ import { loadTheme } from './theme.js';
 import { loadAllSettings, getWeekStart } from './settings.js';
 import './settings-ui.js';
 import { exportToICS } from './export.js';
+import { importFromICS } from './import.js';
 
 let currentYear = new Date().getFullYear();
 let currentMonth = new Date().getMonth();
@@ -71,6 +72,8 @@ document.getElementById('todayBtn').addEventListener('click', () => {
 });
 
 document.getElementById('exportBtn').addEventListener('click', exportToICS);
+
+document.getElementById('importBtn').addEventListener('click', importFromICS);
 
 loadTheme();
 loadAllSettings();

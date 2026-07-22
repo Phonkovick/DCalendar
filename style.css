@@ -491,7 +491,6 @@ input[type="range"]::-moz-range-thumb {
     outline-color: #ffe484;
     background: rgba(0, 119, 190, 0.3);
 }
-/* Годовой обзор */
 .month-card {
     background: var(--bg-day);
     border-radius: 12px;
@@ -555,7 +554,6 @@ input[type="range"]::-moz-range-thumb {
     border-color: var(--bg-today);
     box-shadow: 0 0 0 3px rgba(0, 119, 190, 0.2);
 }
-/* Палитра цветов */
 .color-picker {
     display: flex;
     align-items: center;
@@ -590,7 +588,6 @@ input[type="range"]::-moz-range-thumb {
     border-style: dashed;
 }
 
-/* Индикатор цвета на ячейке (заменяет стандартный) */
 .note-indicator {
     width: 8px;
     height: 8px;
@@ -605,7 +602,6 @@ input[type="range"]::-moz-range-thumb {
     background: #ccc;
 }
 
-/* Фильтр в настройках */
 .filter-colors {
     display: flex;
     flex-wrap: wrap;
@@ -647,7 +643,21 @@ input[type="range"]::-moz-range-thumb {
     background: var(--bg-day-hover);
 }
 
-/* Скрытие дней при фильтре */
 .day-cell.filter-hidden {
     display: none;
+}
+.settings-action-btn {
+    padding: 8px 20px;
+    border: none;
+    border-radius: 30px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: 0.2s;
+    background: var(--bg-today);
+    color: white;
+}
+.settings-action-btn:hover {
+    background: var(--bg-today-hover);
+    transform: scale(1.02);
 }
