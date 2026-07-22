@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Календарь с заметками</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <span class="month-year" id="monthYear">Январь 2026</span>
+        <div class="header-controls">
+            <button class="nav-btn" id="settingsBtn" title="Настройки">⚙️</button>
+            <button class="nav-btn" id="todayBtn" title="Сегодня">📅</button>
+            <button class="nav-btn" id="prevMonth">‹</button>
+            <button class="nav-btn" id="nextMonth">›</button>
+            <input type="text" id="searchInput" placeholder="🔍 Поиск..." class="search-input" />
+        </div>
+    </div>
+
+    <div class="weekdays" id="weekdays">
+        <span>Пн</span><span>Вт</span><span>Ср</span>
+        <span>Чт</span><span>Пт</span><span>Сб</span><span>Вс</span>
+    </div>
+
+    <div class="days-grid" id="daysGrid"></div>
+
+    <!-- Панель для inline-режима (одна, с id) -->
+    <div class="note-panel" id="notePanel">
+        <div class="note-panel-header">
+            <span class="note-panel-date" id="panelDate">Заметка на 12.01.2026</span>
+            <button class="note-panel-close" id="panelClose">✕</button>
+        </div>
+        <input type="text" id="panelTitleInput" placeholder="Заголовок" class="panel-title-input" />
+        <textarea id="panelNoteInput" placeholder="Текст заметки…"></textarea>
+        <div class="color-picker" id="panelColorPicker">
+            <span>Цвет:</span>
+            <button class="color-btn" data-color="null" style="background:#ccc;" title="Без цвета"></button>
+            <button class="color-btn" data-color="#e74c3c" style="background:#e74c3c;" title="Красный"></button>
+            <button class="color-btn" data-color="#3498db" style="background:#3498db;" title="Синий"></button>
+            <button class="color-btn" data-color="#2ecc71" style="background:#2ecc71;" title="Зелёный"></button>
+            <button class="color-btn" data-color="#f1c40f" style="background:#f1c40f;" title="Жёлтый"></button>
+            <button class="color-btn" data-color="#9b59b6" style="background:#9b59b6;" title="Фиолетовый"></button>
+            <button class="color-btn" data-color="#e67e22" style="background:#e67e22;" title="Оранжевый"></button>
+        </div>
+        <div class="note-panel-actions">
+            <button class="btn-delete" id="panelDeleteBtn">Удалить</button>
+            <button class="btn-save" id="panelSaveBtn">Сохранить</button>
+        </div>
+    </div>
+</div>
+
+<!-- Модалка заметок -->
+<div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+        <h2 id="modalDate">Заметка на 12.01.2026</h2>
+        <input type="text" id="modalTitleInput" placeholder="Заголовок" class="modal-title-input" />
+        <textarea id="noteInput" placeholder="Текст заметки…"></textarea>
+        <div class="color-picker" id="modalColorPicker">
+            <span>Цвет:</span>
+            <button class="color-btn" data-color="null" style="background:#ccc;" title="Без цвета"></button>
+            <button class="color-btn" data-color="#e74c3c" style="background:#e74c3c;" title="Красный"></button>
+            <button class="color-btn" data-color="#3498db" style="background:#3498db;" title="Синий"></button>
+            <button class="color-btn" data-color="#2ecc71" style="background:#2ecc71;" title="Зелёный"></button>
+            <button class="color-btn" data-color="#f1c40f" style="background:#f1c40f;" title="Жёлтый"></button>
+            <button class="color-btn" data-color="#9b59b6" style="background:#9b59b6;" title="Фиолетовый"></button>
+            <button class="color-btn" data-color="#e67e22" style="background:#e67e22;" title="Оранжевый"></button>
+        </div>
+        <div class="modal-actions">
+            <button class="btn-close" id="closeModalBtn">Закрыть</button>
+            <button class="btn-delete" id="deleteNoteBtn">Удалить</button>
+            <button class="btn-save" id="saveNoteBtn">Сохранить</button>
+        </div>
+    </div>
+</div>
+
+<!-- Модалка настроек -->
+<div class="modal-overlay" id="settingsModal">
+    <div class="modal settings-modal">
+        <div class="settings-header">
+            <h2>Настройки</h2>
+            <button class="settings-close" id="settingsCloseBtn">✕</button>
+        </div>
+        <div class="settings-body">
+            <div class="setting-item">
+                <label>Тёмная тема</label>
+                <div class="toggle-wrapper">
+                    <span>Выкл</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="themeToggle" />
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span>Вкл</span>
+                </div>
+                <p class="setting-desc">Включить тёмную тему оформления</p>
+            </div>
+
+            <div class="setting-item">
+                <label>Режим заметок</label>
+                <div class="toggle-wrapper">
+                    <span>Окно</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="modeToggle" />
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span>Панель</span>
+                </div>
+                <p class="setting-desc">Окно поверх или панель внизу</p>
+            </div>
+
+            <div class="setting-item">
+                <label>Первый день недели</label>
+                <div class="toggle-wrapper">
+                    <span>Пн</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="weekStartToggle" />
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span>Вс</span>
+                </div>
+                <p class="setting-desc">С какого дня начинается неделя</p>
+            </div>
+
+            <div class="setting-item">
+                <label>Фильтр по цвету</label>
+                <div class="filter-colors" id="filterColors">
+                    <button class="filter-btn" data-color="null" style="background:#ccc;" title="Без цвета"></button>
+                    <button class="filter-btn" data-color="#e74c3c" style="background:#e74c3c;" title="Красный"></button>
+                    <button class="filter-btn" data-color="#3498db" style="background:#3498db;" title="Синий"></button>
+                    <button class="filter-btn" data-color="#2ecc71" style="background:#2ecc71;" title="Зелёный"></button>
+                    <button class="filter-btn" data-color="#f1c40f" style="background:#f1c40f;" title="Жёлтый"></button>
+                    <button class="filter-btn" data-color="#9b59b6" style="background:#9b59b6;" title="Фиолетовый"></button>
+                    <button class="filter-btn" data-color="#e67e22" style="background:#e67e22;" title="Оранжевый"></button>
+                    <button class="filter-reset-btn" id="filterResetBtn">Сбросить</button>
+                </div>
+                <p class="setting-desc">Показывать только дни с выбранным цветом</p>
+            </div>
+
+            <div class="setting-item">
+                <label>Размер шрифта: <span id="fontSizeLabel">100%</span></label>
+                <input type="range" id="fontSizeSlider" min="80" max="150" value="100" step="1" />
+                <p class="setting-desc">Измените размер текста в календаре</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="module" src="js/main.js"></script>
+</body>
+</html>

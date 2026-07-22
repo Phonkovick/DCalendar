@@ -1,0 +1,653 @@
+:root {
+    --bg-body: #ffffff;
+    --bg-container: #ffffff;
+    --text-primary: #1a2634;
+    --text-secondary: #5b6f84;
+    --bg-day: #ffffff;
+    --bg-day-hover: #f0f0f0;
+    --bg-today: #0077be;
+    --bg-today-hover: #005f8a;
+    --indicator-color: #f39c12;
+    --indicator-today: #ffe484;
+    --modal-bg: #ffffff;
+    --modal-border: #ccd7e4;
+    --btn-close-bg: #eef2f7;
+    --btn-close-hover: #dce3ec;
+    --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    --transition: 0.3s ease;
+    --panel-bg: #f9fafc;
+}
+
+body.dark-theme {
+    --bg-body: #0d0d0d;
+    --bg-container: #1e1e1e;
+    --text-primary: #e8edf2;
+    --text-secondary: #a0b3c9;
+    --bg-day: #2a2a2a;
+    --bg-day-hover: #3a3a3a;
+    --bg-today: #2a7db5;
+    --bg-today-hover: #1f5f8a;
+    --indicator-color: #f1c40f;
+    --indicator-today: #f1c40f;
+    --modal-bg: #262626;
+    --modal-border: #444;
+    --btn-close-bg: #3a3a3a;
+    --btn-close-hover: #4a4a4a;
+    --shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+    --panel-bg: #2a2a2a;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: var(--bg-body);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 20px;
+    transition: background var(--transition), color var(--transition);
+}
+.container {
+    background: var(--bg-container);
+    border-radius: 20px;
+    box-shadow: var(--shadow);
+    padding: 25px 30px;
+    width: 100%;
+    max-width: 550px;
+    transition: background var(--transition), box-shadow var(--transition);
+}
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    position: sticky;
+    top: 0;
+    background: var(--bg-container);
+    z-index: 10;
+    padding: 5px 0;
+    transition: background var(--transition);
+}
+.month-year {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    transition: color var(--transition);
+}
+.header-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.nav-btn, .theme-toggle, .mode-toggle {
+    background: none;
+    border: none;
+    font-size: 1.8rem;
+    cursor: pointer;
+    color: var(--text-secondary);
+    padding: 0 10px;
+    transition: color var(--transition), transform 0.2s;
+    line-height: 1;
+}
+.nav-btn:hover, .theme-toggle:hover, .mode-toggle:hover {
+    color: var(--bg-today);
+    transform: scale(1.1);
+}
+.theme-toggle {
+    font-size: 1.5rem;
+    padding: 0 5px;
+}
+.mode-toggle {
+    font-size: 1.3rem;
+    padding: 0 5px;
+}
+.weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 10px;
+    font-size: 0.9rem;
+    transition: color var(--transition);
+}
+.days-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+    grid-auto-rows: 1fr;
+    margin-bottom: 15px;
+}
+.day-cell {
+    aspect-ratio: 1 / 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-day);
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: calc(1.1rem * var(--calendar-font-size, 100%) / 100);
+    font-weight: 500;
+    color: var(--text-primary);
+    transition: background var(--transition), color var(--transition), transform 0.2s;
+    position: relative;
+    user-select: none;
+}
+.day-cell:hover {
+    background: var(--bg-day-hover);
+    transform: scale(1.03);
+}
+.day-cell.empty {
+    background: transparent;
+    cursor: default;
+    pointer-events: none;
+    transform: none;
+}
+.day-cell.today {
+    background: var(--bg-today);
+    color: white;
+    font-weight: 700;
+}
+.day-cell.today:hover {
+    background: var(--bg-today-hover);
+}
+.note-indicator {
+    width: 6px;
+    height: 6px;
+    background: var(--indicator-color);
+    border-radius: 50%;
+    position: absolute;
+    bottom: 6px;
+    left: 50%;
+    transform: translateX(-50%);
+    transition: background var(--transition);
+}
+.day-cell.today .note-indicator {
+    background: var(--indicator-today);
+}
+
+.note-panel {
+    display: none;
+    background: var(--panel-bg);
+    border-radius: 12px;
+    padding: 15px;
+    margin-top: 10px;
+    transition: background var(--transition);
+    border: 1px solid var(--modal-border);
+}
+.note-panel.visible {
+    display: block;
+}
+.note-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.note-panel-date {
+    font-weight: 600;
+    color: var(--text-primary);
+    transition: color var(--transition);
+}
+.note-panel-close {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    color: var(--text-secondary);
+    transition: color var(--transition), transform 0.2s;
+}
+.note-panel-close:hover {
+    color: var(--bg-today);
+    transform: scale(1.2);
+}
+.note-panel textarea {
+    width: 100%;
+    min-height: 80px;
+    padding: 10px;
+    border: 1px solid var(--modal-border);
+    border-radius: 10px;
+    font-size: 1rem;
+    font-family: inherit;
+    resize: vertical;
+    background: var(--bg-day);
+    color: var(--text-primary);
+    transition: background var(--transition), color var(--transition), border-color var(--transition);
+}
+.note-panel textarea:focus {
+    outline: none;
+    border-color: var(--bg-today);
+    box-shadow: 0 0 0 3px rgba(0, 119, 190, 0.2);
+}
+.note-panel-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 10px;
+}
+.note-panel-actions button {
+    padding: 6px 16px;
+    border: none;
+    border-radius: 30px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+}
+.modal-overlay.active {
+    display: flex;
+}
+.modal {
+    background: var(--modal-bg);
+    border-radius: 16px;
+    padding: 25px 30px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+    animation: fadeIn 0.2s ease;
+    transition: background var(--transition);
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to   { opacity: 1; transform: scale(1); }
+}
+.modal h2 {
+    margin-bottom: 15px;
+    font-size: 1.2rem;
+    color: var(--text-primary);
+    transition: color var(--transition);
+}
+.modal textarea {
+    width: 100%;
+    min-height: 100px;
+    padding: 12px;
+    border: 1px solid var(--modal-border);
+    border-radius: 10px;
+    font-size: 1rem;
+    font-family: inherit;
+    resize: vertical;
+    background: var(--bg-day);
+    color: var(--text-primary);
+    transition: background var(--transition), color var(--transition), border-color var(--transition);
+}
+.modal textarea:focus {
+    outline: none;
+    border-color: var(--bg-today);
+    box-shadow: 0 0 0 3px rgba(0, 119, 190, 0.2);
+}
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 15px;
+}
+.modal-actions button {
+    padding: 8px 20px;
+    border: none;
+    border-radius: 30px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.btn-save {
+    background: var(--bg-today);
+    color: white;
+}
+.btn-save:hover {
+    background: var(--bg-today-hover);
+}
+.btn-delete {
+    background: #e74c3c;
+    color: white;
+}
+.btn-delete:hover {
+    background: #c0392b;
+}
+.btn-close {
+    background: var(--btn-close-bg);
+    color: var(--text-primary);
+}
+.btn-close:hover {
+    background: var(--btn-close-hover);
+}
+
+@media (max-width: 480px) {
+    .container { padding: 15px; }
+    .month-year { font-size: 1.2rem; }
+    .day-cell { font-size: 0.9rem; }
+    .note-panel { padding: 12px; }
+}
+.settings-modal {
+    max-width: 450px;
+}
+.settings-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+.settings-header h2 {
+    margin: 0;
+    color: var(--text-primary);
+}
+.settings-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--text-secondary);
+    transition: color var(--transition), transform 0.2s;
+}
+.settings-close:hover {
+    color: var(--bg-today);
+    transform: scale(1.2);
+}
+.settings-body {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+.setting-item {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.setting-item label {
+    font-weight: 600;
+    color: var(--text-primary);
+    transition: color var(--transition);
+}
+.setting-item .setting-desc {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin: 0;
+}
+.toggle-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--text-secondary);
+}
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 28px;
+    flex-shrink: 0;
+}
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+.toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #ccc;
+    border-radius: 28px;
+    transition: 0.3s;
+}
+.toggle-slider::before {
+    content: "";
+    position: absolute;
+    height: 20px;
+    width: 20px;
+    left: 4px;
+    bottom: 4px;
+    background: white;
+    border-radius: 50%;
+    transition: 0.3s;
+}
+.toggle-switch input:checked + .toggle-slider {
+    background: var(--bg-today);
+}
+.toggle-switch input:checked + .toggle-slider::before {
+    transform: translateX(22px);
+}
+body.dark-theme .toggle-slider {
+    background: #555;
+}
+input[type="range"] {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 6px;
+    border-radius: 3px;
+    background: var(--modal-border);
+    outline: none;
+    transition: background var(--transition);
+}
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--bg-today);
+    cursor: pointer;
+    transition: 0.2s;
+}
+input[type="range"]::-webkit-slider-thumb:hover {
+    transform: scale(1.15);
+}
+input[type="range"]::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--bg-today);
+    cursor: pointer;
+    border: none;
+}
+.search-input {
+    padding: 5px 10px;
+    border: 1px solid var(--modal-border);
+    border-radius: 20px;
+    font-size: 0.9rem;
+    background: var(--bg-day);
+    color: var(--text-primary);
+    transition: border-color var(--transition), background var(--transition);
+    width: 140px;
+    outline: none;
+}
+.search-input:focus {
+    border-color: var(--bg-today);
+    box-shadow: 0 0 0 2px rgba(0, 119, 190, 0.2);
+}
+.search-input::placeholder {
+    color: var(--text-secondary);
+    opacity: 0.7;
+}
+
+.day-cell.search-match {
+    outline: 2px solid var(--bg-today);
+    outline-offset: -2px;
+    background: rgba(0, 119, 190, 0.15);
+    transition: background 0.2s;
+}
+.day-cell.search-match.today {
+    outline-color: #ffe484;
+    background: rgba(0, 119, 190, 0.3);
+}
+/* Годовой обзор */
+.month-card {
+    background: var(--bg-day);
+    border-radius: 12px;
+    padding: 12px 8px;
+    cursor: pointer;
+    transition: background var(--transition), transform 0.2s;
+    text-align: center;
+    border: 1px solid var(--modal-border);
+}
+.month-card:hover {
+    background: var(--bg-day-hover);
+    transform: scale(1.03);
+}
+.month-card-title {
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+}
+.month-card-days {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.4;
+    min-height: 2.5em;
+}
+.month-card-day {
+    color: var(--text-primary);
+    font-weight: 500;
+}
+.month-card-more {
+    color: var(--bg-today);
+    font-style: italic;
+}
+.month-card-empty {
+    color: var(--text-secondary);
+    opacity: 0.6;
+    font-size: 0.8rem;
+}
+.month-card-count {
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    margin-top: 4px;
+    opacity: 0.7;
+}
+.modal-title-input,
+.panel-title-input {
+    width: 100%;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    border: 1px solid var(--modal-border);
+    border-radius: 10px;
+    font-size: 1rem;
+    font-family: inherit;
+    background: var(--bg-day);
+    color: var(--text-primary);
+    transition: border-color var(--transition), background var(--transition);
+    outline: none;
+}
+.modal-title-input:focus,
+.panel-title-input:focus {
+    border-color: var(--bg-today);
+    box-shadow: 0 0 0 3px rgba(0, 119, 190, 0.2);
+}
+/* Палитра цветов */
+.color-picker {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 8px 0 12px 0;
+    flex-wrap: wrap;
+}
+.color-picker span {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-right: 4px;
+}
+.color-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 2px solid var(--modal-border);
+    cursor: pointer;
+    transition: border-color 0.2s, transform 0.2s;
+    padding: 0;
+    flex-shrink: 0;
+}
+.color-btn:hover {
+    transform: scale(1.15);
+}
+.color-btn.active {
+    border-color: var(--bg-today);
+    border-width: 3px;
+    box-shadow: 0 0 0 2px rgba(0, 119, 190, 0.2);
+}
+.color-btn[data-color="null"] {
+    border-style: dashed;
+}
+
+/* Индикатор цвета на ячейке (заменяет стандартный) */
+.note-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    position: absolute;
+    bottom: 4px;
+    left: 50%;
+    transform: translateX(-50%);
+    transition: background 0.2s;
+}
+.note-indicator.color-null {
+    background: #ccc;
+}
+
+/* Фильтр в настройках */
+.filter-colors {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 6px;
+}
+.filter-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 2px solid var(--modal-border);
+    cursor: pointer;
+    transition: border-color 0.2s, transform 0.2s;
+    padding: 0;
+}
+.filter-btn:hover {
+    transform: scale(1.1);
+}
+.filter-btn.active-filter {
+    border-color: var(--bg-today);
+    border-width: 3px;
+    box-shadow: 0 0 0 2px rgba(0, 119, 190, 0.2);
+}
+.filter-btn[data-color="null"] {
+    background: #ccc;
+    border-style: dashed;
+}
+.filter-reset-btn {
+    padding: 4px 14px;
+    border: 1px solid var(--modal-border);
+    border-radius: 20px;
+    background: var(--bg-day);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: 0.2s;
+    font-size: 0.85rem;
+}
+.filter-reset-btn:hover {
+    background: var(--bg-day-hover);
+}
+
+/* Скрытие дней при фильтре */
+.day-cell.filter-hidden {
+    display: none;
+}
