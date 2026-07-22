@@ -1,9 +1,9 @@
 // js/settings-ui.js
 
 import { setColorFilter, getColorFilter } from './settings.js';
-import { setWeekStart, getWeekStart, setFontSize, getFontSize } from './settings.js';
-import { toggleTheme, loadTheme } from './theme.js';
-import { setMode, getMode, loadMode } from './settings.js';
+import { setWeekStart, getWeekStart } from './settings.js';
+import { toggleTheme } from './theme.js';
+import { setMode, getMode } from './settings.js';
 
 const settingsBtn = document.getElementById('settingsBtn');
 const settingsModal = document.getElementById('settingsModal');
@@ -12,7 +12,6 @@ const settingsCloseBtn = document.getElementById('settingsCloseBtn');
 const themeToggle = document.getElementById('themeToggle');
 const modeToggle = document.getElementById('modeToggle');
 const weekStartToggle = document.getElementById('weekStartToggle');
-const fontSizeSlider = document.getElementById('fontSizeSlider');
 
 const filterButtons = document.querySelectorAll('.filter-btn');
 const filterResetBtn = document.getElementById('filterResetBtn');
@@ -41,11 +40,6 @@ function openSettings() {
     themeToggle.checked = document.body.classList.contains('dark-theme');
     modeToggle.checked = getMode() === 'inline';
     weekStartToggle.checked = getWeekStart() === 'sunday';
-
-    const currentFontSize = getFontSize();
-    fontSizeSlider.value = currentFontSize;
-    fontSizeLabel.textContent = currentFontSize + '%';
-
     settingsModal.classList.add('active');
 }
 
@@ -64,7 +58,6 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
-
 themeToggle.addEventListener('change', () => {
     toggleTheme();
     themeToggle.checked = document.body.classList.contains('dark-theme');
@@ -80,7 +73,7 @@ modeToggle.addEventListener('change', () => {
 });
 
 weekStartToggle.addEventListener('change', () => {
-	console.log('Переключение Пн/Вс, новое значение:', weekStartToggle.checked ? 'sunday' : 'monday');
+    console.log('Переключение Пн/Вс, новое значение:', weekStartToggle.checked ? 'sunday' : 'monday');
     const value = weekStartToggle.checked ? 'sunday' : 'monday';
     setWeekStart(value);
 });
