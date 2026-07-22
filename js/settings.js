@@ -40,7 +40,7 @@ export function getWeekStart() {
 }
 
 export function setWeekStart(value) {
-	console.log('setWeekStart вызван, значение:', value);
+    console.log('setWeekStart вызван, значение:', value);
     if (value !== 'monday' && value !== 'sunday') return;
     weekStart = value;
     localStorage.setItem('weekStart', value);
@@ -59,7 +59,6 @@ export function loadWeekStart() {
 export function loadAllSettings() {
     loadMode();
     loadWeekStart();
-    loadFontSize();
 }
 
 modeToggle.addEventListener('click', toggleMode);
