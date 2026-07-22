@@ -3,7 +3,7 @@
 import { initSearch, refreshSearch } from './search.js';
 import { renderCalendar, renderYearView } from './calendar.js';
 import { loadTheme } from './theme.js';
-import { loadAllSettings } from './settings.js';
+import { loadAllSettings, getWeekStart } from './settings.js'; // <-- добавили getWeekStart
 import './settings-ui.js';
 
 let currentYear = new Date().getFullYear();
@@ -20,7 +20,7 @@ function toggleView() {
 monthYearEl.addEventListener('click', toggleView);
 
 function refreshCalendar() {
-	console.log('refreshCalendar вызван, неделя:', getWeekStart());
+    console.log('refreshCalendar вызван, неделя:', getWeekStart()); // теперь getWeekStart определён
     console.log('refreshCalendar вызван, isYearView:', isYearView);
     if (isYearView) {
         renderYearView(currentYear);
@@ -30,6 +30,9 @@ function refreshCalendar() {
     refreshSearch();
 }
 
+// --- ПОДПИСКА НА СОБЫТИЯ ---
+document.addEventListener('settings-changed', refreshCalendar); // <-- добавили
+document.addEventListener('notes-updated', refreshCalendar);
 document.addEventListener('month-selected', (e) => {
     const { year, month } = e.detail;
     currentYear = year;
@@ -38,6 +41,7 @@ document.addEventListener('month-selected', (e) => {
     refreshCalendar();
 });
 
+// Навигация (стрелки)
 document.getElementById('prevMonth').addEventListener('click', () => {
     if (isYearView) {
         currentYear--;
@@ -67,6 +71,7 @@ document.getElementById('todayBtn').addEventListener('click', () => {
     refreshCalendar();
 });
 
+// Инициализация
 loadTheme();
 loadAllSettings();
 initSearch();
