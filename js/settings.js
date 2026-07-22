@@ -4,7 +4,6 @@ const modeToggle = document.getElementById('modeToggle');
 let currentMode = 'modal';
 
 let weekStart = 'monday';
-let fontSize = 100;
 
 export function getMode() {
     return currentMode;
@@ -55,28 +54,6 @@ export function loadWeekStart() {
     } else {
         weekStart = 'monday';
     }
-}
-
-export function getFontSize() {
-    return fontSize;
-}
-
-export function setFontSize(value) {
-    fontSize = Math.min(150, Math.max(80, value));
-    localStorage.setItem('fontSize', String(fontSize));
-    document.dispatchEvent(new CustomEvent('settings-changed'));
-}
-
-export function loadFontSize() {
-    const saved = localStorage.getItem('fontSize');
-    if (saved !== null) {
-        const parsed = parseInt(saved, 10);
-        if (!isNaN(parsed) && parsed >= 80 && parsed <= 150) {
-            fontSize = parsed;
-            return;
-        }
-    }
-    fontSize = 100;
 }
 
 export function loadAllSettings() {

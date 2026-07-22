@@ -14,7 +14,6 @@ const modeToggle = document.getElementById('modeToggle');
 const weekStartToggle = document.getElementById('weekStartToggle');
 const fontSizeSlider = document.getElementById('fontSizeSlider');
 
-const fontSizeLabel = document.getElementById('fontSizeLabel');
 const filterButtons = document.querySelectorAll('.filter-btn');
 const filterResetBtn = document.getElementById('filterResetBtn');
 const currentFilter = getColorFilter();
@@ -84,10 +83,4 @@ weekStartToggle.addEventListener('change', () => {
 	console.log('Переключение Пн/Вс, новое значение:', weekStartToggle.checked ? 'sunday' : 'monday');
     const value = weekStartToggle.checked ? 'sunday' : 'monday';
     setWeekStart(value);
-});
-
-fontSizeSlider.addEventListener('input', () => {
-    const value = parseInt(fontSizeSlider.value, 10);
-    fontSizeLabel.textContent = value + '%';
-    setFontSize(value);
 });
