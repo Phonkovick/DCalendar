@@ -78,7 +78,12 @@ export function renderCalendar(year, month) {
     for (let day = 1; day <= daysInMonth; day++) {
         const cell = document.createElement('div');
         cell.className = 'day-cell';
-        cell.textContent = day;
+
+        // Отдельный элемент числа гарантирует, что оно останется читаемым на цветном фоне.
+        const dayNumber = document.createElement('span');
+        dayNumber.className = 'day-number';
+        dayNumber.textContent = day;
+        cell.appendChild(dayNumber);
 
         const dateStr = formatDate(year, month, day);
         cell.dataset.date = dateStr;
