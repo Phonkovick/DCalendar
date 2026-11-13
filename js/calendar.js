@@ -1,7 +1,7 @@
 // js/calendar.js
 
 import { hasNote, loadNote } from './notes.js';
-import { getMode, getWeekStart, getFontSize, getColorFilter } from './settings.js';
+import { getMode, getWeekStart, getFontSize } from './settings.js';
 import { openModal } from './modal.js';
 import { handleDayClick } from './panel.js';
 
@@ -13,13 +13,17 @@ function applyFontSize(percent) {
     document.documentElement.style.setProperty('--calendar-font-size', percent + '%');
 }
 
-function matchesColorFilter(dateStr) {
-    const filter = getColorFilter();
-    if (filter === 'all') return true;
-    if (!hasNote(dateStr)) return false;
+function getReadableTextColor(hexColor) {
+    if (!/^#[0-9a-f]{6}$/i.test(hexColor)) return '#1a2634';
 
-    const note = loadNote(dateStr);
-    return (note.color || null) === filter;
+    const channels = hexColor.slice(1).match(/.{2}/g).map(value => parseInt(value, 16) / 255);
+    const linear = channels.map(value =>
+        value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4
+    );
+    const luminance = 0.2126 * linear[0] + 0.7152 * linear[1] + 0.0722 * linear[2];
+
+    // Выбираем более контрастный текст для читаемости на цветном фоне.
+    return luminance > 0.179 ? '#1a2634' : '#ffffff';
 }
 
 export function getDaysInMonth(year, month) {
@@ -39,26 +43,21 @@ function renderWeekdays(weekStart) {
 }
 
 export function renderCalendar(year, month) {
-    // Восстанавливаем стили
     weekdaysEl.style.display = 'grid';
     daysGrid.style.gridTemplateColumns = 'repeat(7, 1fr)';
     daysGrid.style.gap = '6px';
     daysGrid.style.gridAutoRows = '1fr';
 
     const weekStart = getWeekStart();
-    const fontSize = getFontSize();
-    applyFontSize(fontSize);
+    applyFontSize(getFontSize());
     renderWeekdays(weekStart);
 
     const daysInMonth = getDaysInMonth(year, month);
     const firstDay = new Date(year, month, 1).getDay();
 
-    let offset;
-    if (weekStart === 'monday') {
-        offset = (firstDay === 0) ? 6 : firstDay - 1;
-    } else {
-        offset = firstDay;
-    }
+    const offset = weekStart === 'monday'
+        ? (firstDay === 0 ? 6 : firstDay - 1)
+        : firstDay;
 
     const monthNames = [
         'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
@@ -67,7 +66,6 @@ export function renderCalendar(year, month) {
     monthYearEl.textContent = `${monthNames[month]} ${year}`;
     daysGrid.innerHTML = '';
 
-    // Пустые ячейки
     for (let i = 0; i < offset; i++) {
         const emptyCell = document.createElement('div');
         emptyCell.className = 'day-cell empty';
@@ -81,49 +79,39 @@ export function renderCalendar(year, month) {
         const cell = document.createElement('div');
         cell.className = 'day-cell';
         cell.textContent = day;
+
         const dateStr = formatDate(year, month, day);
         cell.dataset.date = dateStr;
-
-        if (!matchesColorFilter(dateStr)) {
-            // Сохраняем ячейку в сетке, чтобы дни не смещались.
-            cell.classList.add('filter-hidden');
-        }
-
-        // Подсказка (заголовок)
-        try {
-            const note = loadNote(dateStr);
-            if (note && (note.title || note.text)) {
-                cell.title = note.title || note.text.substring(0, 20);
-            }
-        } catch (e) {
-            // Ошибка чтения одной заметки не должна ломать весь календарь.
-        }
 
         if (dateStr === todayStr) {
             cell.classList.add('today');
         }
 
-        // Индикатор заметки
-        if (hasNote(dateStr)) {
-            try {
+        try {
+            if (hasNote(dateStr)) {
                 const note = loadNote(dateStr);
-                const color = (note && note.color) ? note.color : null;
-                const indicator = document.createElement('span');
-                indicator.className = 'note-indicator';
-                if (color) {
-                    indicator.style.background = color;
-                } else {
-                    indicator.classList.add('color-null');
+
+                if (note.title || note.text) {
+                    cell.title = note.title || note.text.substring(0, 20);
                 }
-                cell.appendChild(indicator);
-            } catch (e) {
-                // Если заметку не удалось прочитать, просто не добавляем индикатор.
+
+                if (typeof note.color === 'string' && /^#[0-9a-f]{6}$/i.test(note.color)) {
+                    cell.classList.add('note-colored');
+                    cell.style.setProperty('--note-color', note.color);
+                    cell.style.setProperty('--note-text-color', getReadableTextColor(note.color));
+                } else {
+                    const indicator = document.createElement('span');
+                    indicator.className = 'note-indicator color-null';
+                    cell.appendChild(indicator);
+                }
             }
+        } catch (error) {
+            // Ошибка чтения одной заметки не должна ломать весь календарь.
+            console.warn(`Не удалось загрузить заметку ${dateStr}:`, error);
         }
 
         cell.addEventListener('click', () => {
-            const mode = getMode();
-            if (mode === 'modal') {
+            if (getMode() === 'modal') {
                 openModal(dateStr);
             } else {
                 handleDayClick(dateStr);
@@ -133,10 +121,9 @@ export function renderCalendar(year, month) {
         daysGrid.appendChild(cell);
     }
 
-    // Добиваем до 42 ячеек
+    // Добиваем до 42 ячеек, сохраняя одинаковую высоту сетки.
     const totalCells = 42;
-    const currentCells = daysGrid.children.length;
-    for (let i = currentCells; i < totalCells; i++) {
+    for (let i = daysGrid.children.length; i < totalCells; i++) {
         const emptyCell = document.createElement('div');
         emptyCell.className = 'day-cell empty';
         daysGrid.appendChild(emptyCell);
@@ -144,8 +131,7 @@ export function renderCalendar(year, month) {
 }
 
 export function renderYearView(year) {
-    const fontSize = getFontSize();
-    applyFontSize(fontSize);
+    applyFontSize(getFontSize());
 
     weekdaysEl.style.display = 'none';
     monthYearEl.textContent = `${year}`;
@@ -171,9 +157,9 @@ export function renderYearView(year) {
 
         const daysInMonth = getDaysInMonth(year, month);
         const daysWithNotes = [];
+
         for (let day = 1; day <= daysInMonth; day++) {
-            const dateStr = formatDate(year, month, day);
-            if (hasNote(dateStr) && matchesColorFilter(dateStr)) {
+            if (hasNote(formatDate(year, month, day))) {
                 daysWithNotes.push(day);
             }
         }
@@ -190,10 +176,12 @@ export function renderYearView(year) {
                 daySpan.className = 'month-card-day';
                 daySpan.textContent = day;
                 daysList.appendChild(daySpan);
+
                 if (index < displayDays.length - 1) {
                     daysList.appendChild(document.createTextNode(', '));
                 }
             });
+
             if (daysWithNotes.length > 10) {
                 const more = document.createElement('span');
                 more.className = 'month-card-more';
