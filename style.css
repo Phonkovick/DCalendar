@@ -710,51 +710,6 @@ input[type="range"]::-moz-range-thumb {
     background: #ccc;
 }
 
-.filter-colors {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 6px;
-}
-.filter-btn {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    border: 2px solid var(--modal-border);
-    cursor: pointer;
-    transition: border-color 0.2s, transform 0.2s;
-    padding: 0;
-}
-.filter-btn:hover {
-    transform: scale(1.1);
-}
-.filter-btn.active-filter {
-    border-color: var(--bg-today);
-    border-width: 3px;
-    box-shadow: 0 0 0 2px rgba(0, 119, 190, 0.2);
-}
-.filter-btn[data-color="null"] {
-    background: #ccc;
-    border-style: dashed;
-}
-.filter-reset-btn {
-    padding: 4px 14px;
-    border: 1px solid var(--modal-border);
-    border-radius: 20px;
-    background: var(--bg-day);
-    color: var(--text-primary);
-    cursor: pointer;
-    transition: 0.2s;
-    font-size: 0.85rem;
-}
-.filter-reset-btn:hover {
-    background: var(--bg-day-hover);
-}
-
-.day-cell.filter-hidden {
-    visibility: hidden;
-    pointer-events: none;
-}
 .settings-action-btn {
     padding: 8px 20px;
     border: none;
@@ -769,4 +724,20 @@ input[type="range"]::-moz-range-thumb {
 .settings-action-btn:hover {
     background: var(--bg-today-hover);
     transform: scale(1.02);
+}
+/* Заметка окрашивает всю ячейку календаря. */
+.day-cell.note-colored,
+.day-cell.note-colored.search-match,
+.day-cell.note-colored.today {
+    background: var(--note-color);
+    color: var(--note-text-color);
+}
+
+.day-cell.note-colored:hover {
+    filter: brightness(0.92);
+}
+
+.day-cell.note-colored.today {
+    font-weight: 700;
+    box-shadow: inset 0 0 0 2px currentColor;
 }
