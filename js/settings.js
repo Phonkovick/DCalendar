@@ -40,7 +40,6 @@ export function getWeekStart() {
 }
 
 export function setWeekStart(value) {
-    console.log('setWeekStart вызван, значение:', value);
     if (value !== 'monday' && value !== 'sunday') return;
     weekStart = value;
     localStorage.setItem('weekStart', value);
@@ -59,25 +58,41 @@ export function loadWeekStart() {
 export function loadAllSettings() {
     loadMode();
     loadWeekStart();
+    loadColorFilter();
 }
 
-modeToggle.addEventListener('click', toggleMode);
-
-let colorFilter = null;
+// Значение 'all' означает отсутствие фильтра, null — заметки без выбранного цвета.
+let colorFilter = 'all';
 
 export function getColorFilter() {
     return colorFilter;
 }
 
 export function setColorFilter(color) {
+    const isValidColor = typeof color === 'string' && /^#[0-9a-f]{6}$/i.test(color);
+    if (color !== 'all' && color !== null && !isValidColor) return;
+
     colorFilter = color;
-    localStorage.setItem('colorFilter', color || '');
+
+    if (color === 'all') {
+        localStorage.removeItem('colorFilter');
+    } else {
+        localStorage.setItem('colorFilter', color === null ? 'none' : color);
+    }
+
     document.dispatchEvent(new CustomEvent('settings-changed'));
 }
 
 export function loadColorFilter() {
     const saved = localStorage.getItem('colorFilter');
-    colorFilter = saved || null;
+
+    if (saved === 'none') {
+        colorFilter = null;
+    } else if (typeof saved === 'string' && /^#[0-9a-f]{6}$/i.test(saved)) {
+        colorFilter = saved;
+    } else {
+        colorFilter = 'all';
+    }
 }
 
 export function getFontSize() {

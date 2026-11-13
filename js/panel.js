@@ -79,6 +79,10 @@ function handleDelete() {
     saveNote(selectedDate, '', '');
     panelTitleInput.value = '';
     panelNoteInput.value = '';
+    selectedColor = null;
+    panelColorPicker.querySelectorAll('.color-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.color === 'null');
+    });
     document.dispatchEvent(new CustomEvent('notes-updated'));
 }
 
@@ -91,7 +95,8 @@ panelDeleteBtn.addEventListener('click', handleDelete);
 panelClose.addEventListener('click', closeInlineNote);
 
 function handleKeydown(e) {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    // Enter оставляет перенос строки; Ctrl+Enter (или Cmd+Enter на Mac) сохраняет заметку.
+    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey) && !e.isComposing) {
         e.preventDefault();
         handleSave();
     }

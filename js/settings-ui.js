@@ -15,31 +15,36 @@ const weekStartToggle = document.getElementById('weekStartToggle');
 
 const filterButtons = document.querySelectorAll('.filter-btn');
 const filterResetBtn = document.getElementById('filterResetBtn');
-const currentFilter = getColorFilter();
+
+function syncColorFilterButtons() {
+    const currentFilter = getColorFilter();
+
+    filterButtons.forEach(btn => {
+        const color = btn.dataset.color === 'null' ? null : btn.dataset.color;
+        btn.classList.toggle('active-filter', color === currentFilter);
+    });
+}
+
+syncColorFilterButtons();
 
 filterButtons.forEach(btn => {
-    btn.classList.remove('active-filter');
-    const color = btn.dataset.color === 'null' ? null : btn.dataset.color;
-    if (color === currentFilter) {
-        btn.classList.add('active-filter');
-    }
     btn.addEventListener('click', () => {
         const selectedColor = btn.dataset.color === 'null' ? null : btn.dataset.color;
         setColorFilter(selectedColor);
-        filterButtons.forEach(b => b.classList.remove('active-filter'));
-        btn.classList.add('active-filter');
+        syncColorFilterButtons();
     });
 });
 
 filterResetBtn.addEventListener('click', () => {
-    setColorFilter(null);
-    filterButtons.forEach(b => b.classList.remove('active-filter'));
+    setColorFilter('all');
+    syncColorFilterButtons();
 });
 
 function openSettings() {
     themeToggle.checked = document.body.classList.contains('dark-theme');
     modeToggle.checked = getMode() === 'inline';
     weekStartToggle.checked = getWeekStart() === 'sunday';
+    syncColorFilterButtons();
     settingsModal.classList.add('active');
 }
 
@@ -73,7 +78,6 @@ modeToggle.addEventListener('change', () => {
 });
 
 weekStartToggle.addEventListener('change', () => {
-    console.log('Переключение Пн/Вс, новое значение:', weekStartToggle.checked ? 'sunday' : 'monday');
     const value = weekStartToggle.checked ? 'sunday' : 'monday';
     setWeekStart(value);
 });

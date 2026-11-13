@@ -1,7 +1,7 @@
 // js/calendar.js
 
 import { hasNote, loadNote } from './notes.js';
-import { getMode, getWeekStart, getFontSize } from './settings.js';
+import { getMode, getWeekStart, getFontSize, getColorFilter } from './settings.js';
 import { openModal } from './modal.js';
 import { handleDayClick } from './panel.js';
 
@@ -11,6 +11,15 @@ const weekdaysEl = document.getElementById('weekdays');
 
 function applyFontSize(percent) {
     document.documentElement.style.setProperty('--calendar-font-size', percent + '%');
+}
+
+function matchesColorFilter(dateStr) {
+    const filter = getColorFilter();
+    if (filter === 'all') return true;
+    if (!hasNote(dateStr)) return false;
+
+    const note = loadNote(dateStr);
+    return (note.color || null) === filter;
 }
 
 export function getDaysInMonth(year, month) {
@@ -75,21 +84,26 @@ export function renderCalendar(year, month) {
         const dateStr = formatDate(year, month, day);
         cell.dataset.date = dateStr;
 
-        // Подсказка (заголовок) – безопасно
+        if (!matchesColorFilter(dateStr)) {
+            // Сохраняем ячейку в сетке, чтобы дни не смещались.
+            cell.classList.add('filter-hidden');
+        }
+
+        // Подсказка (заголовок)
         try {
             const note = loadNote(dateStr);
             if (note && (note.title || note.text)) {
                 cell.title = note.title || note.text.substring(0, 20);
             }
         } catch (e) {
-            // игнорируем ошибки загрузки
+            // Ошибка чтения одной заметки не должна ломать весь календарь.
         }
 
         if (dateStr === todayStr) {
             cell.classList.add('today');
         }
 
-        // Индикатор заметки – безопасно
+        // Индикатор заметки
         if (hasNote(dateStr)) {
             try {
                 const note = loadNote(dateStr);
@@ -103,7 +117,7 @@ export function renderCalendar(year, month) {
                 }
                 cell.appendChild(indicator);
             } catch (e) {
-                // если ошибка, просто не добавляем индикатор
+                // Если заметку не удалось прочитать, просто не добавляем индикатор.
             }
         }
 
@@ -159,7 +173,7 @@ export function renderYearView(year) {
         const daysWithNotes = [];
         for (let day = 1; day <= daysInMonth; day++) {
             const dateStr = formatDate(year, month, day);
-            if (hasNote(dateStr)) {
+            if (hasNote(dateStr) && matchesColorFilter(dateStr)) {
                 daysWithNotes.push(day);
             }
         }
