@@ -752,7 +752,8 @@ input[type="range"]::-moz-range-thumb {
 }
 
 .day-cell.filter-hidden {
-    display: none;
+    visibility: hidden;
+    pointer-events: none;
 }
 .settings-action-btn {
     padding: 8px 20px;
